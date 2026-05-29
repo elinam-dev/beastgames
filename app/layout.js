@@ -32,6 +32,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="dark">
+      <head>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9076188162270142" crossOrigin="anonymous"></script>
+      </head>
       <body className="bg-black text-white antialiased selection:bg-amber-400 selection:text-black">
         {children}
         <Toaster richColors theme="dark" position="top-center" />
