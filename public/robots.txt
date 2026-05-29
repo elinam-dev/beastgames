@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://gaming-africa-hub.preview.emergentagent.com/sitemap.xml
