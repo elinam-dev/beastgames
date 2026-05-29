@@ -100,7 +100,7 @@ const App = () => {
     } catch {}
   }, [])
 
-  // poll stats + leaderboard
+  // poll stats + leaderboard every 3 minutes (180 seconds)
   useEffect(() => {
     let on = true
     const load = async () => {
@@ -115,7 +115,7 @@ const App = () => {
       } catch {}
     }
     load()
-    const t = setInterval(load, 8000)
+    const t = setInterval(load, 180000) // Update every 3 minutes
     return () => { on = false; clearInterval(t) }
   }, [])
 
@@ -448,6 +448,7 @@ const App = () => {
                       <div className="font-bold flex items-center gap-2">
                         {row.fullName.split(' ')[0]} {row.fullName.split(' ')[1]?.[0]?.toUpperCase() || ''}.
                         {row.priorityUnlocked && <Badge className="bg-cyan-400/20 text-cyan-200 border-cyan-300/30 text-[10px]"><Unlock className="w-3 h-3 mr-1" />PRIORITY</Badge>}
+                        {!row.isFake && <Badge className="bg-green-400/20 text-green-200 border-green-300/30 text-[10px]"><Star className="w-3 h-3 mr-1" />REAL</Badge>}
                       </div>
                       <div className="text-xs text-white/50 flex items-center gap-1"><MapPin className="w-3 h-3" />{row.country}</div>
                     </div>

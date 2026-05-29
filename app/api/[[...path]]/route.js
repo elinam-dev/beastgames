@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { v4 as uuidv4 } from 'uuid'
+import { getMergedLeaderboard, getMergedStats } from '@/lib/fakeLeaderboard'
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -38,12 +39,7 @@ function adminOk(request) {
 async function getStats(db) {
   const total = await db.collection('applications').countDocuments({})
   const priority = await db.collection('applications').countDocuments({ priorityUnlocked: true })
-  const baseFake = 12847 // social proof base — real count adds on top
-  return {
-    total,
-    priority,
-    displayCount: baseFake + total,
-  }
+  return getMergedStats(total, priority)
 }
 
 async function recomputeReferrals(db, code) {
@@ -69,13 +65,12 @@ export async function GET(request, { params }) {
 
     if (path === 'leaderboard') {
       const limit = parseInt(url.searchParams.get('limit') || '10', 10)
-      const rows = await db.collection('applications')
-        .find({ referralCount: { $gt: 0 } })
+      const realUsers = await db.collection('applications')
+        .find({})
         .project({ fullName: 1, country: 1, referralCode: 1, referralCount: 1, priorityUnlocked: 1, _id: 0 })
-        .sort({ referralCount: -1, createdAt: 1 })
-        .limit(limit)
         .toArray()
-      return json({ leaderboard: rows })
+      const merged = getMergedLeaderboard(realUsers, limit)
+      return json({ leaderboard: merged })
     }
 
     if (path.startsWith('applications/')) {
